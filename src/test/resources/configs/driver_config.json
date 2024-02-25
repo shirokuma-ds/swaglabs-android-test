@@ -1,0 +1,10 @@
+{
+  "url": "http://0.0.0.0:4723",
+  "caps": {
+    "deviceName": "emulator-5554",
+    "udid": "emulator-5554",
+    "appPackage": "com.swaglabsmobileapp",
+    "appActivity": "com.swaglabsmobileapp.MainActivity",
+    "noReset": "true"
+  }
+}
