@@ -1,9 +1,12 @@
 package org.shirokuma.bases
 
 import org.openqa.selenium.*
+import org.openqa.selenium.support.ui.FluentWait
+import org.shirokuma.configs.ConfigLoader
 import org.shirokuma.drivers.DriverManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.time.Duration
 
 open class ElementFacade : WebElement {
 
@@ -39,7 +42,17 @@ open class ElementFacade : WebElement {
 
     private val driver = DriverManager.driver
 
-    open fun toElement(): WebElement = driver.findElement(locator)
+    open fun toElement(): WebElement {
+        val wait = FluentWait<WebDriver>(driver)
+            .withTimeout(Duration.ofSeconds(ConfigLoader.testConfig.defaultElementTimeoutInSeconds))
+            .pollingEvery(Duration.ofMillis(ConfigLoader.testConfig.defaultElementPollingInMillis))
+            .ignoring(NoSuchElementException::class.java)
+            .ignoring(NotFoundException::class.java)
+        wait.until {
+            driver.findElement(locator).isDisplayed && driver.findElement(locator).isEnabled
+        }
+        return driver.findElement(locator)
+    }
 
     open fun toElements(): MutableList<WebElement> = driver.findElements(locator)
 
@@ -55,6 +68,8 @@ open class ElementFacade : WebElement {
         val isDisplayed = try {
             isDisplayed
         } catch (e: NoSuchElementException) {
+            return false
+        } catch (e: TimeoutException) {
             return false
         }
 
@@ -77,6 +92,8 @@ open class ElementFacade : WebElement {
         return try {
             isDisplayed && isEnabled
         } catch (e: NoSuchElementException) {
+            false
+        } catch (e: TimeoutException) {
             false
         }
     }

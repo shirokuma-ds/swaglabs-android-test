@@ -1,0 +1,4 @@
+{
+  "defaultElementTimeoutInSeconds": 2,
+  "defaultElementPollingInMillis": 100
+}
