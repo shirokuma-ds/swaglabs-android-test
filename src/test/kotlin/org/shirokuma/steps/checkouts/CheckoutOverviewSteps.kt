@@ -21,7 +21,7 @@ class CheckoutOverviewSteps : BaseStep() {
     }
 
     @Step("[Checkout Overview] Check that cart item detail and quantity is correct")
-    fun checkCheckoutItemDetail(itemDetail: ItemDetail, qty: Int, maxAttempt: Int = 10) {
+    fun checkCheckoutItemDetail(itemDetail: ItemDetail, maxAttempt: Int = 10) {
         var attempt = 0
         while (attempt++ < maxAttempt && !checkoutOverviewPage.elItems.toElements().any {
                 it.findElement(checkoutOverviewPage.txtItemName.locator).text == itemDetail.name
@@ -39,7 +39,7 @@ class CheckoutOverviewSteps : BaseStep() {
             softly.assertThat(it.findElement(checkoutOverviewPage.txtItemName.locator).text).isEqualTo(itemDetail.name)
             softly.assertThat(it.findElement(checkoutOverviewPage.txtItemPrice.locator).text)
                 .isEqualTo(itemDetail.price)
-            softly.assertThat(it.findElement(checkoutOverviewPage.txtItemQty.locator).text.toInt()).isEqualTo(qty)
+            softly.assertThat(it.findElement(checkoutOverviewPage.txtItemQty.locator).text.toInt()).isEqualTo(itemDetail.qty)
             softly.assertAll()
         }
     }

@@ -21,7 +21,7 @@ class CartsSteps : BaseStep() {
     }
 
     @Step("[Carts] Check that cart item detail and quantity is correct")
-    fun checkCartItemDetail(itemDetail: ItemDetail, qty: Int, maxAttempt: Int = 10) {
+    fun checkCartItemDetail(itemDetail: ItemDetail, maxAttempt: Int = 10) {
         var attempt = 0
         while (attempt++ < maxAttempt && !cartsPage.elCartItems.toElements().any {
                 it.findElement(cartsPage.txtItemName.locator).text == itemDetail.name
@@ -38,7 +38,7 @@ class CartsSteps : BaseStep() {
             Swipe.swipeIntoView(ElementFacade.fromWebElement(it), SwipeDirection.UP)
             softly.assertThat(it.findElement(cartsPage.txtItemName.locator).text).isEqualTo(itemDetail.name)
             softly.assertThat(it.findElement(cartsPage.txtItemPrice.locator).text).isEqualTo(itemDetail.price)
-            softly.assertThat(it.findElement(cartsPage.txtItemQty.locator).text.toInt()).isEqualTo(qty)
+            softly.assertThat(it.findElement(cartsPage.txtItemQty.locator).text.toInt()).isEqualTo(itemDetail.qty)
             softly.assertAll()
         }
     }

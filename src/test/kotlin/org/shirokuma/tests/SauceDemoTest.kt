@@ -8,6 +8,7 @@ import org.shirokuma.testData.products.ItemDetail
 import org.shirokuma.users.User
 import org.testng.annotations.AfterMethod
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 
 @Feature("Sauce Demo Tests")
@@ -30,19 +31,27 @@ class SauceDemoTest {
         user.driver?.quit()
     }
 
-    @Test(priority = 1)
+    @DataProvider(name = "user_data")
+    fun userData(): MutableIterator<Array<String>> {
+        return arrayListOf(arrayOf("standard_user", "secret_sauce", "John", "Smith", "11101")).iterator()
+    }
+
+    @Test(priority = 1, dataProvider = "user_data")
     @Story("Do a purchase of 2 items")
-    fun `purchase items until checkout`() {
+    fun `purchase items until checkout`(
+        username: String, password: String, firstName: String, lastName: String, postalCode: String
+    ) {
         val itemList = mutableListOf<ItemDetail>()
         user.run {
             loginSteps.inLoginScreen(true)
-            loginSteps.doLogin("standard_user", "secret_sauce")
+            loginSteps.doLogin(username, password)
             loginSteps.inLoginScreen(false)
             showcaseSteps.inShowcaseScreen(true)
             headerSteps.isHeaderDisplayed(true)
             repeat(2) {
                 val itemNumber = it + 1
                 val itemDetail = showcaseSteps.checkItemDetail(itemNumber)
+                itemDetail.qty += 1
                 itemList.add(itemDetail)
                 showcaseSteps.clickOnItem(itemNumber)
                 showcaseSteps.inShowcaseScreen(false)
@@ -60,16 +69,16 @@ class SauceDemoTest {
             showcaseSteps.inShowcaseScreen(false)
             cartSteps.inCartsScreen(true)
             itemList.forEach {
-                cartSteps.checkCartItemDetail(it, 1)
+                cartSteps.checkCartItemDetail(it)
             }
             cartSteps.clickOnBtnCheckout()
             cartSteps.inCartsScreen(false)
             checkoutInfoSteps.inCheckoutInfoScreen(true)
-            checkoutInfoSteps.fillCheckoutInfo("John", "Smith", "11101")
+            checkoutInfoSteps.fillCheckoutInfo(firstName, lastName, postalCode)
             checkoutInfoSteps.inCheckoutInfoScreen(false)
             checkoutOverviewSteps.inCheckoutOverviewScreen(true)
             itemList.forEach {
-                checkoutOverviewSteps.checkCheckoutItemDetail(it, 1)
+                checkoutOverviewSteps.checkCheckoutItemDetail(it)
             }
             checkoutOverviewSteps.clickOnBtnFinish()
             checkoutOverviewSteps.inCheckoutOverviewScreen(false)
