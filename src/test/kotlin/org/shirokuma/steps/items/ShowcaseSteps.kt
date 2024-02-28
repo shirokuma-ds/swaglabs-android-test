@@ -28,8 +28,6 @@ class ShowcaseSteps : BaseStep() {
     @Step("[Products] Check item {number} detail")
     fun checkItemDetail(number: Int, addedToCart: Boolean = false): ItemDetail {
         val elItem = showcasePage.elProducts.toElements()[number - 1]
-        val itemImage = elItem.findElement(By.xpath("//*[@class='android.widget.ImageView']"))
-        val itemImageScreenshot = itemImage.getScreenshotAs(OutputType.FILE)
         val itemName = elItem.findElement(showcasePage.txtProductName.locator).text
         val itemPrice = elItem.findElement(showcasePage.txtProductPrice.locator).text
         val isBtnAddToCartExist = try {
